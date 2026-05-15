@@ -1,88 +1,155 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 import {
-  getTitle,
-  getDate,
-  getPoster,
-  getRating,
-  getMediaId,
+    getTitle,
+    getDate,
+    getPoster,
+    getRating,
+    getMediaId,
 } from "../utils/mediaHelpers"
 
 import {
-  isStoredItem,
-  toggleStoredItem,
+    isStoredItem,
+    toggleStoredItem,
 } from "../utils/storageHelpers"
 
-function MediaCard({ item, onClick }) {
-  const itemId = getMediaId(item)
+import Toast from "./Toast"
 
-  const [isFavorite, setIsFavorite] = useState(
-    isStoredItem("favorites", itemId)
-  )
+function MediaCard({ item }) {
+    const navigate = useNavigate()
 
-  const [isWatchlist, setIsWatchlist] = useState(
-    isStoredItem("watchlist", itemId)
-  )
+    const itemId = getMediaId(item)
 
-  const handleFavoriteClick = (e) => {
-    e.stopPropagation()
+    const [isFavorite, setIsFavorite] = useState(
+        isStoredItem("favorites", itemId)
+    )
 
-    toggleStoredItem("favorites", {
-      ...item,
-      id: itemId,
-    })
+    const [isWatchlist, setIsWatchlist] = useState(
+        isStoredItem("watchlist", itemId)
+    )
 
-    setIsFavorite(!isFavorite)
-  }
+    const [toastMessage, setToastMessage] =
+        useState("")
 
-  const handleWatchlistClick = (e) => {
-    e.stopPropagation()
+    const handleFavoriteClick = (e) => {
+        e.stopPropagation()
 
-    toggleStoredItem("watchlist", {
-      ...item,
-      id: itemId,
-    })
+        toggleStoredItem("favorites", {
+            ...item,
+            id: itemId,
+        })
 
-    setIsWatchlist(!isWatchlist)
-  }
+        const newValue = !isFavorite
 
-  return (
-    <div className="movie-card" onClick={() => onClick(item)}>
-      <img src={getPoster(item)} alt={getTitle(item)} />
+        setIsFavorite(newValue)
 
-      <div className="movie-info">
-        <h3>{getTitle(item)}</h3>
+        setToastMessage(
+            newValue
+                ? "Added to favorites"
+                : "Removed from favorites"
+        )
 
-        <p>{getDate(item)}</p>
+        setTimeout(() => {
+            setToastMessage("")
+        }, 2500)
+    }
 
-        <span>
-          ⭐ {getRating(item) > 0 ? getRating(item).toFixed(1) : "N/A"}
-        </span>
+    const handleWatchlistClick = (e) => {
+        e.stopPropagation()
 
-        <div className="card-actions">
-          <button
-            className={`favorite-button ${
-              isFavorite ? "favorite-active" : ""
-            }`}
-            onClick={handleFavoriteClick}
-            title="Add to favorites"
-          >
-            <span className="heart-icon">♥</span>
-          </button>
+        toggleStoredItem("watchlist", {
+            ...item,
+            id: itemId,
+        })
 
-          <button
-            className={`watchlist-button ${
-              isWatchlist ? "watchlist-active" : ""
-            }`}
-            onClick={handleWatchlistClick}
-            title="Add to watchlist"
-          >
-            +
-          </button>
-        </div>
-      </div>
-    </div>
-  )
+        const newValue = !isWatchlist
+
+        setIsWatchlist(newValue)
+
+        setToastMessage(
+            newValue
+                ? "Added to watchlist"
+                : "Removed from watchlist"
+        )
+
+        setTimeout(() => {
+            setToastMessage("")
+        }, 2500)
+    }
+
+    const handleNavigate = () => {
+        let mediaType = "movie"
+
+        if (item.mal_id) {
+            mediaType = "anime"
+        } else if (item.first_air_date) {
+            mediaType = "tv"
+        }
+
+        navigate(
+            `/detail/${mediaType}/${item.id || item.mal_id}`
+        )
+    }
+
+    return (
+        <>
+            <div
+                className="movie-card"
+                onClick={handleNavigate}
+            >
+                <img
+                    src={getPoster(item)}
+                    alt={getTitle(item)}
+                />
+
+                <div className="movie-info">
+                    <h3>{getTitle(item)}</h3>
+
+                    <p>{getDate(item)}</p>
+
+                    <span>
+                        ⭐{" "}
+                        {getRating(item) > 0
+                            ? getRating(item).toFixed(1)
+                            : "N/A"}
+                    </span>
+
+                    <div className="card-actions">
+                        <button
+                            className={`favorite-button ${isFavorite
+                                    ? "favorite-active"
+                                    : ""
+                                }`}
+                            onClick={handleFavoriteClick}
+                            title="Add to favorites"
+                        >
+                            <span className="heart-icon">
+                                ♥
+                            </span>
+                        </button>
+
+                        <button
+                            className={`watchlist-button ${isWatchlist
+                                    ? "watchlist-active"
+                                    : ""
+                                }`}
+                            onClick={handleWatchlistClick}
+                            title="Add to watchlist"
+                        >
+                            <span className="watchlist-icon">
+                                {isWatchlist ? "✓" : "+"}
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {toastMessage && (
+                <Toast message={toastMessage} />
+            )}
+        </>
+    )
 }
 
 export default MediaCard
