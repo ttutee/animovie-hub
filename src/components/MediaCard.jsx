@@ -88,11 +88,7 @@ function MediaCard({ item, sourceType }) {
     }
 
     const handleNavigate = () => {
-        let mediaType = sourceType || "movie"
-
-        if (item.mal_id) {
-            mediaType = "anime"
-        }
+        const mediaType = item.mal_id ? "anime" : sourceType
 
         const from =
             mediaType === "anime"
@@ -139,8 +135,8 @@ function MediaCard({ item, sourceType }) {
                     <div className="card-actions">
                         <button
                             className={`favorite-button ${isFavorite
-                                    ? "favorite-active"
-                                    : ""
+                                ? "favorite-active"
+                                : ""
                                 }`}
                             onClick={handleFavoriteClick}
                             title="Add to favorites"
@@ -152,8 +148,8 @@ function MediaCard({ item, sourceType }) {
 
                         <button
                             className={`watchlist-button ${isWatchlist
-                                    ? "watchlist-active"
-                                    : ""
+                                ? "watchlist-active"
+                                : ""
                                 }`}
                             onClick={handleWatchlistClick}
                             title="Add to watchlist"

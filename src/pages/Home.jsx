@@ -177,9 +177,9 @@ function Home() {
                     <div className="movies-grid">
                         {items.map((item) => (
                             <MediaCard
-                                key={item.id}
+                                key={item.id || item.mal_id}
                                 item={item}
-                                onClick={setSelectedItem}
+                                sourceType={category}
                             />
                         ))}
                     </div>
