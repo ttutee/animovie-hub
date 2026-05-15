@@ -34,6 +34,9 @@ function Detail() {
   const [loading, setLoading] =
     useState(true)
 
+  const [trailer, setTrailer] =
+    useState(null)
+
   const [isFavorite, setIsFavorite] =
     useState(false)
 
@@ -45,41 +48,80 @@ function Detail() {
       try {
         setLoading(true)
 
-        const endpoint =
-          type === "anime"
-            ? `https://api.jikan.moe/v4/anime/${id}`
-            : `https://api.themoviedb.org/3/${type}/${id}?api_key=${import.meta.env.VITE_API_KEY}`
-
-        const response = await fetch(
-          endpoint
-        )
-
-        const data =
-          await response.json()
-
-        const result =
-          type === "anime"
-            ? data.data
-            : data
-
-        setItem(result)
-
-        const mediaId =
-          result.id || result.mal_id
-
-        setIsFavorite(
-          isStoredItem(
-            "favorites",
-            mediaId
+        if (type === "anime") {
+          const response = await fetch(
+            `https://api.jikan.moe/v4/anime/${id}/full`
           )
-        )
 
-        setIsWatchlist(
-          isStoredItem(
-            "watchlist",
-            mediaId
+          const data =
+            await response.json()
+
+          const result = data.data
+
+          setItem(result)
+
+          setTrailer(
+            result.trailer?.embed_url ||
+              null
           )
-        )
+
+          const mediaId =
+            result.mal_id
+
+          setIsFavorite(
+            isStoredItem(
+              "favorites",
+              mediaId
+            )
+          )
+
+          setIsWatchlist(
+            isStoredItem(
+              "watchlist",
+              mediaId
+            )
+          )
+        } else {
+          const response = await fetch(
+            `https://api.themoviedb.org/3/${type}/${id}?api_key=${import.meta.env.VITE_API_KEY}&append_to_response=videos`
+          )
+
+          const data =
+            await response.json()
+
+          setItem(data)
+
+          const trailerVideo =
+            data.videos?.results?.find(
+              (video) =>
+                video.type ===
+                  "Trailer" &&
+                video.site ===
+                  "YouTube"
+            )
+
+          if (trailerVideo) {
+            setTrailer(
+              `https://www.youtube.com/embed/${trailerVideo.key}`
+            )
+          }
+
+          const mediaId = data.id
+
+          setIsFavorite(
+            isStoredItem(
+              "favorites",
+              mediaId
+            )
+          )
+
+          setIsWatchlist(
+            isStoredItem(
+              "watchlist",
+              mediaId
+            )
+          )
+        }
       } catch (error) {
         console.error(error)
       } finally {
@@ -191,6 +233,18 @@ function Detail() {
               <p className="detail-description">
                 {getDescription(item)}
               </p>
+
+              {trailer && (
+                <div className="trailer-section">
+                  <h2>Trailer</h2>
+
+                  <iframe
+                    src={trailer}
+                    title="Trailer"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              )}
             </div>
           </div>
         </div>
