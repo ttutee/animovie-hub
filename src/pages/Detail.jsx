@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import {
   useNavigate,
   useParams,
+  useLocation,
 } from "react-router-dom"
 
 import {
@@ -22,6 +23,11 @@ function Detail() {
   const { type, id } = useParams()
 
   const navigate = useNavigate()
+
+  const location = useLocation()
+
+  const fromPage =
+    location.state?.from || "/"
 
   const [item, setItem] = useState(null)
 
@@ -44,9 +50,12 @@ function Detail() {
             ? `https://api.jikan.moe/v4/anime/${id}`
             : `https://api.themoviedb.org/3/${type}/${id}?api_key=${import.meta.env.VITE_API_KEY}`
 
-        const response = await fetch(endpoint)
+        const response = await fetch(
+          endpoint
+        )
 
-        const data = await response.json()
+        const data =
+          await response.json()
 
         const result =
           type === "anime"
@@ -133,7 +142,9 @@ function Detail() {
         <div className="detail-overlay">
           <button
             className="back-button"
-            onClick={() => navigate(-1)}
+            onClick={() =>
+              navigate(fromPage)
+            }
           >
             ← Back
           </button>

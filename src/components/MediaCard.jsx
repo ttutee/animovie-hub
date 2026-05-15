@@ -1,4 +1,5 @@
 import { useState } from "react"
+
 import { useNavigate } from "react-router-dom"
 
 import {
@@ -16,18 +17,26 @@ import {
 
 import Toast from "./Toast"
 
-function MediaCard({ item }) {
+function MediaCard({ item, sourceType }) {
     const navigate = useNavigate()
 
     const itemId = getMediaId(item)
 
-    const [isFavorite, setIsFavorite] = useState(
-        isStoredItem("favorites", itemId)
-    )
+    const [isFavorite, setIsFavorite] =
+        useState(
+            isStoredItem(
+                "favorites",
+                itemId
+            )
+        )
 
-    const [isWatchlist, setIsWatchlist] = useState(
-        isStoredItem("watchlist", itemId)
-    )
+    const [isWatchlist, setIsWatchlist] =
+        useState(
+            isStoredItem(
+                "watchlist",
+                itemId
+            )
+        )
 
     const [toastMessage, setToastMessage] =
         useState("")
@@ -79,16 +88,26 @@ function MediaCard({ item }) {
     }
 
     const handleNavigate = () => {
-        let mediaType = "movie"
+        let mediaType = sourceType || "movie"
 
         if (item.mal_id) {
             mediaType = "anime"
-        } else if (item.first_air_date) {
-            mediaType = "tv"
         }
 
+        const from =
+            mediaType === "anime"
+                ? "/anime"
+                : mediaType === "tv"
+                    ? "/series"
+                    : "/movies"
+
         navigate(
-            `/detail/${mediaType}/${item.id || item.mal_id}`
+            `/detail/${mediaType}/${item.id || item.mal_id}`,
+            {
+                state: {
+                    from,
+                },
+            }
         )
     }
 
@@ -111,7 +130,9 @@ function MediaCard({ item }) {
                     <span>
                         ⭐{" "}
                         {getRating(item) > 0
-                            ? getRating(item).toFixed(1)
+                            ? getRating(item).toFixed(
+                                1
+                            )
                             : "N/A"}
                     </span>
 
