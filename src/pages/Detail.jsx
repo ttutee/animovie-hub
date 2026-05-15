@@ -12,6 +12,9 @@ import {
   getRating,
   getDescription,
   getMediaId,
+  getYear,
+  getGenres,
+  getDuration,
 } from "../utils/mediaHelpers"
 
 import {
@@ -62,7 +65,7 @@ function Detail() {
 
           setTrailer(
             result.trailer?.embed_url ||
-              null
+            null
           )
 
           const mediaId =
@@ -95,9 +98,9 @@ function Detail() {
             data.videos?.results?.find(
               (video) =>
                 video.type ===
-                  "Trailer" &&
+                "Trailer" &&
                 video.site ===
-                  "YouTube"
+                "YouTube"
             )
 
           if (trailerVideo) {
@@ -205,10 +208,21 @@ function Detail() {
                 ⭐{" "}
                 {getRating(item) > 0
                   ? getRating(item).toFixed(
-                      1
-                    )
+                    1
+                  )
                   : "N/A"}
               </p>
+
+              <div className="detail-meta">
+                <span>{getYear(item)}</span>
+                <span>{getDuration(item)}</span>
+              </div>
+
+              <div className="detail-genres">
+                {getGenres(item).map((genre) => (
+                  <span key={genre}>{genre}</span>
+                ))}
+              </div>
 
               <div className="detail-actions">
                 <button

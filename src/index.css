@@ -739,3 +739,34 @@ body {
   border-radius: 20px;
   box-shadow: 0 20px 50px rgba(0,0,0,0.4);
 }
+
+.detail-meta {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 18px;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.detail-meta span {
+  padding: 8px 13px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid #334155;
+}
+
+.detail-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.detail-genres span {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.15);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  font-weight: 700;
+}

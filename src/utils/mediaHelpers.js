@@ -48,3 +48,44 @@ export const getDescription = (item) => {
 export const getMediaId = (item) => {
   return item.id || item.mal_id
 }
+
+export const getYear = (item) => {
+  const date =
+    item.release_date ||
+    item.first_air_date ||
+    item.aired?.from
+
+  if (!date) {
+    return "Unknown"
+  }
+
+  return date.slice(0, 4)
+}
+
+export const getGenres = (item) => {
+  if (!item.genres) {
+    return []
+  }
+
+  return item.genres.map((genre) => genre.name)
+}
+
+export const getDuration = (item) => {
+  if (item.runtime) {
+    return `${item.runtime} min`
+  }
+
+  if (item.episode_run_time?.length > 0) {
+    return `${item.episode_run_time[0]} min per episode`
+  }
+
+  if (item.duration) {
+    return item.duration
+  }
+
+  if (item.episodes) {
+    return `${item.episodes} episodes`
+  }
+
+  return "Unknown duration"
+}
