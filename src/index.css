@@ -149,7 +149,10 @@ body {
 }
 
 .movie-info {
+  position: relative;
   padding: 16px;
+  min-height: 125px;
+  padding-right: 70px;
 }
 
 .movie-info h3 {
@@ -355,20 +358,52 @@ body {
   position: relative;
 }
 
+.movie-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(2, 6, 23, 0.65),
+    transparent 55%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.movie-card:hover::before {
+  opacity: 1;
+}
+
+.movie-card img {
+  position: relative;
+  z-index: 0;
+}
+
+.movie-info {
+  position: relative;
+  z-index: 2;
+  padding: 16px;
+  min-height: 125px;
+  padding-right: 70px;
+}
+
 .favorite-button {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  right: 14px;
+  bottom: 14px;
   width: 42px;
   height: 42px;
   border: none;
   border-radius: 50%;
-  background: rgba(2, 6, 23, 0.8);
+  background: rgba(15, 23, 42, 0.95);
   color: white;
   font-size: 22px;
   cursor: pointer;
-  z-index: 5;
-  backdrop-filter: blur(8px);
+  z-index: 10;
+  overflow: hidden;
   transition: all 0.25s ease;
 }
 
@@ -381,4 +416,59 @@ body {
 .favorite-active {
   background: #ef4444;
   color: white;
+}
+
+.heart-icon {
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+
+.favorite-button:hover .heart-icon {
+  transform: scale(1.2);
+}
+
+.favorite-active .heart-icon {
+  animation: heart-pop 0.45s ease;
+}
+
+.favorite-button::after {
+  content: "";
+  position: absolute;
+  inset: 50%;
+  width: 8px;
+  height: 8px;
+  background: rgba(239, 68, 68, 0.45);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+}
+
+.favorite-active::after {
+  animation: heart-pulse 0.55s ease;
+}
+
+@keyframes heart-pop {
+  0% {
+    transform: scale(0.7);
+  }
+
+  50% {
+    transform: scale(1.45);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes heart-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(8);
+    opacity: 0;
+  }
 }
