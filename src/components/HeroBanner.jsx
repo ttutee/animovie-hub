@@ -1,80 +1,95 @@
 import { useEffect, useState } from "react"
 
+import { useNavigate } from "react-router-dom"
+
 import {
-    getTitle,
-    getDescription,
+  getTitle,
+  getDescription,
 } from "../utils/mediaHelpers"
 
 function HeroBanner() {
-    const [featured, setFeatured] =
-        useState(null)
+  const navigate = useNavigate()
 
-    useEffect(() => {
-        const loadFeatured = async () => {
-            try {
-                const response = await fetch(
-                    `https://api.themoviedb.org/3/movie/popular?api_key=${import.meta.env.VITE_API_KEY}`
-                )
+  const [featured, setFeatured] =
+    useState(null)
 
-                const data =
-                    await response.json()
+  useEffect(() => {
+    const loadFeatured = async () => {
+      try {
+        const response = await fetch(
+          `https://api.themoviedb.org/3/movie/popular?api_key=${import.meta.env.VITE_API_KEY}`
+        )
 
-                const randomMovie =
-                    data.results[
-                    Math.floor(
-                        Math.random() *
-                        data.results.length
-                    )
-                    ]
+        const data =
+          await response.json()
 
-                setFeatured(randomMovie)
-            } catch (error) {
-                console.error(error)
-            }
-        }
+        const randomMovie =
+          data.results[
+            Math.floor(
+              Math.random() *
+                data.results.length
+            )
+          ]
 
-        loadFeatured()
-    }, [])
-
-    if (!featured) {
-        return null
+        setFeatured(randomMovie)
+      } catch (error) {
+        console.error(error)
+      }
     }
 
-    const backdrop = `https://image.tmdb.org/t/p/original${featured.backdrop_path}`
+    loadFeatured()
+  }, [])
 
-    return (
-        <section
-            className="hero-banner"
-            style={{
-                backgroundImage: `url(${backdrop})`,
-            }}
-        >
-            <div className="hero-banner-overlay">
-                <div className="hero-banner-content">
-                    <h1>
-                        {getTitle(featured)}
-                    </h1>
+  if (!featured) {
+    return null
+  }
 
-                    <p>
-                        {getDescription(
-                            featured
-                        ).slice(0, 180)}
-                        ...
-                    </p>
+  const backdrop = `https://image.tmdb.org/t/p/original${featured.backdrop_path}`
 
-                    <div className="hero-banner-buttons">
-                        <button>
-                            ▶ Watch Now
-                        </button>
+  return (
+    <section
+      className="hero-banner"
+      style={{
+        backgroundImage: `url(${backdrop})`,
+      }}
+    >
+      <div className="hero-banner-overlay">
+        <div className="hero-banner-content">
+          <h1>
+            {getTitle(featured)}
+          </h1>
 
-                        <button className="secondary-button">
-                            + Watchlist
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-    )
+          <p>
+            {getDescription(
+              featured
+            ).slice(0, 180)}
+            ...
+          </p>
+
+          <div className="hero-banner-buttons">
+            <button
+              onClick={() =>
+                navigate(
+                  `/detail/movie/${featured.id}`,
+                  {
+                    state: {
+                      from: "/",
+                    },
+                  }
+                )
+              }
+            >
+              ▶ Watch Now
+            </button>
+
+            <button className="secondary-button">
+              + Watchlist
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
 }
 
 export default HeroBanner
