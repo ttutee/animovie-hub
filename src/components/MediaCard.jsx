@@ -20,6 +20,10 @@ function MediaCard({ item, onClick }) {
     isStoredItem("favorites", itemId)
   )
 
+  const [isWatchlist, setIsWatchlist] = useState(
+    isStoredItem("watchlist", itemId)
+  )
+
   const handleFavoriteClick = (e) => {
     e.stopPropagation()
 
@@ -29,6 +33,17 @@ function MediaCard({ item, onClick }) {
     })
 
     setIsFavorite(!isFavorite)
+  }
+
+  const handleWatchlistClick = (e) => {
+    e.stopPropagation()
+
+    toggleStoredItem("watchlist", {
+      ...item,
+      id: itemId,
+    })
+
+    setIsWatchlist(!isWatchlist)
   }
 
   return (
@@ -44,14 +59,27 @@ function MediaCard({ item, onClick }) {
           ⭐ {getRating(item) > 0 ? getRating(item).toFixed(1) : "N/A"}
         </span>
 
-        <button
-          className={`favorite-button ${
-            isFavorite ? "favorite-active" : ""
-          }`}
-          onClick={handleFavoriteClick}
-        >
-          <span className="heart-icon">♥</span>
-        </button>
+        <div className="card-actions">
+          <button
+            className={`favorite-button ${
+              isFavorite ? "favorite-active" : ""
+            }`}
+            onClick={handleFavoriteClick}
+            title="Add to favorites"
+          >
+            <span className="heart-icon">♥</span>
+          </button>
+
+          <button
+            className={`watchlist-button ${
+              isWatchlist ? "watchlist-active" : ""
+            }`}
+            onClick={handleWatchlistClick}
+            title="Add to watchlist"
+          >
+            +
+          </button>
+        </div>
       </div>
     </div>
   )
