@@ -1,8 +1,11 @@
+import MediaPage from "../components/MediaPage"
+
 function Anime() {
   return (
-    <div>
-      <h1>Anime</h1>
-    </div>
+    <MediaPage
+      type="anime"
+      title="Anime"
+    />
   )
 }
 

@@ -1,8 +1,11 @@
+import MediaPage from "../components/MediaPage"
+
 function Series() {
   return (
-    <div>
-      <h1>Series</h1>
-    </div>
+    <MediaPage
+      type="tv"
+      title="TV Shows"
+    />
   )
 }
 
