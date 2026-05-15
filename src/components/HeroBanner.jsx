@@ -7,11 +7,24 @@ import {
   getDescription,
 } from "../utils/mediaHelpers"
 
+import {
+  isStoredItem,
+  toggleStoredItem,
+} from "../utils/storageHelpers"
+
+import Toast from "./Toast"
+
 function HeroBanner() {
   const navigate = useNavigate()
 
   const [featured, setFeatured] =
     useState(null)
+
+  const [isWatchlist, setIsWatchlist] =
+    useState(false)
+
+  const [toastMessage, setToastMessage] =
+    useState("")
 
   useEffect(() => {
     const loadFeatured = async () => {
@@ -32,6 +45,13 @@ function HeroBanner() {
           ]
 
         setFeatured(randomMovie)
+
+        setIsWatchlist(
+          isStoredItem(
+            "watchlist",
+            randomMovie.id
+          )
+        )
       } catch (error) {
         console.error(error)
       }
@@ -46,49 +66,78 @@ function HeroBanner() {
 
   const backdrop = `https://image.tmdb.org/t/p/original${featured.backdrop_path}`
 
+  const handleWatchlist = () => {
+    toggleStoredItem("watchlist", featured)
+
+    const newValue = !isWatchlist
+
+    setIsWatchlist(newValue)
+
+    setToastMessage(
+      newValue
+        ? "Added to watchlist"
+        : "Removed from watchlist"
+    )
+
+    setTimeout(() => {
+      setToastMessage("")
+    }, 2500)
+  }
+
   return (
-    <section
-      className="hero-banner"
-      style={{
-        backgroundImage: `url(${backdrop})`,
-      }}
-    >
-      <div className="hero-banner-overlay">
-        <div className="hero-banner-content">
-          <h1>
-            {getTitle(featured)}
-          </h1>
+    <>
+      <section
+        className="hero-banner"
+        style={{
+          backgroundImage: `url(${backdrop})`,
+        }}
+      >
+        <div className="hero-banner-overlay">
+          <div className="hero-banner-content">
+            <h1>
+              {getTitle(featured)}
+            </h1>
 
-          <p>
-            {getDescription(
-              featured
-            ).slice(0, 180)}
-            ...
-          </p>
+            <p>
+              {getDescription(
+                featured
+              ).slice(0, 180)}
+              ...
+            </p>
 
-          <div className="hero-banner-buttons">
-            <button
-              onClick={() =>
-                navigate(
-                  `/detail/movie/${featured.id}`,
-                  {
-                    state: {
-                      from: "/",
-                    },
-                  }
-                )
-              }
-            >
-              ▶ Watch Now
-            </button>
+            <div className="hero-banner-buttons">
+              <button
+                onClick={() =>
+                  navigate(
+                    `/detail/movie/${featured.id}`,
+                    {
+                      state: {
+                        from: "/",
+                      },
+                    }
+                  )
+                }
+              >
+                ▶ Watch Now
+              </button>
 
-            <button className="secondary-button">
-              + Watchlist
-            </button>
+              <button
+                className="secondary-button"
+                onClick={handleWatchlist}
+              >
+                {isWatchlist
+                  ? "✓ In Watchlist"
+                  : "+ Watchlist"}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {toastMessage && (
+        <Toast message={toastMessage} />
+      )}
+    </>
   )
 }
 
