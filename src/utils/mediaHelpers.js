@@ -1,5 +1,5 @@
 export const getTitle = (item) => {
-  return item.title || item.name || item.title_english
+  return item.title || item.name || item.title_english || "Untitled"
 }
 
 export const getDate = (item) => {
@@ -16,20 +16,35 @@ export const getDate = (item) => {
 }
 
 export const getPoster = (item) => {
-  return item.poster_path
-    ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
-    : item.images?.jpg?.large_image_url ||
-        "https://placehold.co/500x750?text=No+Image"
+  if (item.poster_path) {
+    return `https://image.tmdb.org/t/p/w500${item.poster_path}`
+  }
+
+  if (item.images?.jpg?.large_image_url) {
+    return item.images.jpg.large_image_url
+  }
+
+  if (item.images?.jpg?.image_url) {
+    return item.images.jpg.image_url
+  }
+
+  return "https://placehold.co/500x750?text=No+Image"
 }
 
 export const getRating = (item) => {
-  return item.vote_average || item.score || 0
+  const rating = item.vote_average ?? item.score
+
+  if (rating === null || rating === undefined || rating === "") {
+    return 0
+  }
+
+  return Number(rating)
 }
 
 export const getDescription = (item) => {
-  return (
-    item.overview ||
-    item.synopsis ||
-    "No description available."
-  )
+  return item.overview || item.synopsis || "No description available."
+}
+
+export const getMediaId = (item) => {
+  return item.id || item.mal_id
 }

@@ -38,7 +38,7 @@ function DetailModal({ item, onClose }) {
           </p>
 
           <p className="modal-rating">
-            ⭐ {getRating(item).toFixed(1)}
+            ⭐ {getRating(item) > 0 ? getRating(item).toFixed(1) : "N/A"}
           </p>
 
           <p className="modal-overview">
