@@ -1230,3 +1230,61 @@ body {
 .user-profile {
   margin-top: -2px;
 }
+
+.user-menu {
+  position: relative;
+  justify-self: end;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 34px;
+  background: transparent;
+  border: none;
+  color: #cbd5e1;
+  cursor: pointer;
+}
+
+.user-profile img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+}
+
+.user-profile span {
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  width: 240px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid #334155;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+  z-index: 999;
+}
+
+.user-dropdown p {
+  color: #94a3b8;
+  font-size: 14px;
+  margin-bottom: 14px;
+  word-break: break-word;
+}
+
+.user-dropdown button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 999px;
+  border: none;
+  background: #38bdf8;
+  color: #020617;
+  font-weight: bold;
+  cursor: pointer;
+}

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { onAuthStateChanged, signOut } from "firebase/auth"
 import { auth } from "../firebase"
 
 function Navbar() {
   const [user, setUser] = useState(null)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -16,6 +18,8 @@ function Navbar() {
 
   const handleLogout = async () => {
     await signOut(auth)
+    setMenuOpen(false)
+    navigate("/")
   }
 
   return (
@@ -30,20 +34,31 @@ function Navbar() {
         <Link to="/favorites">Favorites</Link>
         <Link to="/watchlist">Watchlist</Link>
 
-        {user ? (
-          <button className="logout-button" onClick={handleLogout}>
-            Logout
-          </button>
-        ) : (
-          <Link to="/login">Login</Link>
-        )}
+        {!user && <Link to="/login">Login</Link>}
       </div>
 
-      {user && (
-        <div className="user-profile">
-          <img src={user.photoURL} alt={user.displayName} />
-          <span>{user.displayName}</span>
+      {user ? (
+        <div className="user-menu">
+          <button
+            className="user-profile"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <img
+              src={user.photoURL || "https://placehold.co/80x80?text=U"}
+              alt={user.displayName || "User"}
+            />
+            <span>{user.displayName || "User"}</span>
+          </button>
+
+          {menuOpen && (
+            <div className="user-dropdown">
+              <p>{user.email}</p>
+              <button onClick={handleLogout}>Logout</button>
+            </div>
+          )}
         </div>
+      ) : (
+        <div></div>
       )}
     </nav>
   )
